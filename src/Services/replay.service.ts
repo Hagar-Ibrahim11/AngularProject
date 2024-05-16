@@ -11,7 +11,7 @@ export class ReplayService {
   constructor(private _HttpClient:HttpClient) { }
 
   getRepliesForComment(commentId: number): Observable<Replay[]> {
-    return this._HttpClient.get<Replay[]>(`http://localhost:5017/api/Replay/comment/${commentId}`);
+    return this._HttpClient.get<Replay[]>(`http://localhost:5017/api/Replay/${commentId}`);
   }
 
   addReplay(newReplay: Replay): Observable<Replay> {

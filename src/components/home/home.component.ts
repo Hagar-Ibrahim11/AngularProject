@@ -26,6 +26,7 @@ declare var $: any;
 })
 export class HomeComponent implements OnInit {
   users: UserData[] = [];
+  postIdForReplay:number = 0;
   /*[
     {
       imageUrl: '../../assets/Images/hagar.jpg',
@@ -102,10 +103,13 @@ export class HomeComponent implements OnInit {
   } = {};
   CommentsForPost: Comment[] = [];
   selectedPostId: number | null = null;
+
   RepliesForComment: Replay[] = [];
+  
   CommentIdForReplay: number = 0;
   PostIdForReplay: number = 0;
   ReplayContent: string = '';
+  commentIdForReplay: number = 0;
   constructor(
     private _PostsServiceService: PostsServiceService,
     private _ReactService: ReactService,
@@ -494,5 +498,53 @@ export class HomeComponent implements OnInit {
       });
       console.log(`id = ${id}`);
     }, 1000);
+  }
+
+  GetAllReplay(id:number) {
+    this._ReplayService.getRepliesForComment(id).subscribe({
+      next: (res) => {
+        this.RepliesForComment = res;
+        console.log(res);
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
+  }
+
+  replayFunction(postid:number , commentid:number ) {
+    this.CommentIdForReplay = commentid;
+    this.PostIdForReplay = postid;
+    localStorage.setItem('postid',postid.toString())
+    console.log(this.PostIdForReplay);
+    this.GetAllReplay(commentid);
+  }
+  addReplay() {
+    let Replay : any = {};
+    Replay.commentId = this.CommentIdForReplay;
+    Replay.content = this.ReplayContent;
+    let mail:any = localStorage.getItem('email');
+      let id:any;
+      this.authService.getCurrentUser(mail).subscribe({
+        next: (user) => {
+          console.log(`mail ${mail}`);
+          id = user.userId;
+          console.log(`id ${id}`);
+          localStorage.setItem('userId',id);
+        }
+      })
+    Replay.userId = localStorage.getItem('userId');
+
+    Replay.postId = Number(localStorage.getItem('postid'));
+    console.log(Replay);
+    this._ReplayService.addReplay(Replay).subscribe({
+      next:(res)=>{
+        console.log(res);
+      },
+      error: (err) => {
+        console.log(err);
+      },
+      
+    });
   }
 }

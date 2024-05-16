@@ -5,4 +5,6 @@ export interface Replay {
     commentId: number;
     postId: number;
     userId: string;
+    img:string;
+    userName:string;
   }
